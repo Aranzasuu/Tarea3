@@ -9,6 +9,7 @@
 int main(){
 
     Libreria *librero;
+    cargarDocumento();
 
 
     return 0;
