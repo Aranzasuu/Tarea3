@@ -5,7 +5,7 @@
 #include "TreeMap.h"
 
 typedef struct Libreria{
-    TreeMap *libros;
+    List *libros;
     size_t totalLibros;
 } Libreria;
 
@@ -23,7 +23,7 @@ typedef struct Palabra{
     size_t frecuencia;
 } Palabra;
 
-
+int is_equal_string(void * key1, void * key2);
 int lower_than_string(void* key1, void* key2);
 
 Libreria *crearLibreria();
