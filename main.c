@@ -8,10 +8,13 @@
 #include "defFunciones.h"
 
 int main(){
-
-    Libreria *librero;
-    Map *mapBooks = createMap(is_equal_string);
-    cargarDocumento(librero, mapBooks);
-    
+    Menu();
     return 0;
 }
+
+/*
+Libreria *librero;
+librero = crearLibreria();
+Map *mapBooks = createTreeMap(lower_than_string);
+cargarDocumento(librero, mapBooks);
+*/

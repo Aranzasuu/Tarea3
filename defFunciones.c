@@ -13,42 +13,94 @@ int is_equal_string(void * key1, void * key2)
     return 0;
 }
 
-void ImprimirMenu(){
-    printf("opcion 1. Cargar Documentos\n");
-    printf("opcion 2. Mostrar Documentos ordenados\n");
-    printf("opcion 3. Buscar libro por titulo\n");
-    printf("opcion 4. Buscar palabras con mayor frecuencia de un libro\n");
-    printf("opcion 5. Buscar palabras mas relevantes de un libro\n");
-    printf("opcion 6. Buscar por palabra los libros\n");
-    printf("opcion 7. Mostrar contexto de la palabra\n");
+int lower_than_string(void* key1, void* key2){
+    char* k1=(char*) key1;
+    char* k2=(char*) key2;
+    if(strcmp(k1,k2)<0) return 1;
+    return 0;
 }
 
-void cargarDocumento(Libreria *lib, Map *mapBooks)
+Libreria *crearLibreria(){
+    Libreria *Librero = (Libreria *) malloc(sizeof(Libreria));
+    if(Librero == NULL){
+        printf("No se pudo reservar memoria para la variable :c\n");
+        return NULL;
+    }
+    Librero->libros = createTreeMap(lower_than_string);
+    Librero->totalLibros = 0;
+    return Librero;
+}
+
+Libros *crearLibro(){
+    Libros *libro = (Libros *) malloc(sizeof(Libros));
+
+    if(libro == NULL){
+        printf("No se pudo reservar memoria para la variable :c\n");
+        return NULL;
+    }
+
+    libro->nomTitulo = createTreeMap(lower_than_string);
+    libro->palLibro = createTreeMap(lower_than_string);
+    libro->totalPalabras = 0;
+
+    return libro;
+}
+
+void Menu(){
+
+    Libreria *librero = crearLibreria();
+    int opcion;
+
+    impresion();
+    printf("Ingrese una opcion valida entre el 0 - 7\n\n-> ");
+    scanf("%d", &opcion);
+    printf("\n");
+
+    while(opcion != 0){
+        switch(opcion){
+            case 1:
+                cargarDocumento(librero);
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                break;
+            default:
+                printf("Ingrese una opcion valida\n-> ");
+                scanf("%d", &opcion);
+        }
+
+        printf("\n\nDesea realizar otra operacion?\n");
+        printf("NO -> ingrese 0\n");
+        printf("SI -> ingrese el numero de la operacion a realizar\n\n");
+        scanf("%d", &opcion);
+        if(opcion == 0) break;
+        impresion();
+    }
+}
+
+
+// FUNCIÓN OPCIÓN 1 
+
+void cargarDocumento(Libreria *lib)
 {
-    char archivo[1024];
+    FILE *archivo;
+    char espacio[2] = " ";
+    char documento[500];
 
-    char *nomArch = (char *) malloc(sizeof(char));
-    FILE *file;
+    printf("Ingrese los nombres de los archivos que desea cargar, debe separarlos por espacios y escribirlos con .txt\n");
+    fgets(documento, 500, stdin);
+    
+    
 
-    while(file == NULL)
-    {
-        printf("Ingresar nombre archivo: ");
-        scanf("%s", &archivo);
-        strcpy(nomArch, archivo);
-        strcat(archivo, ".txt");
-        file = fopen(archivo, "r");
-    }
-
-    Pair *doc = searchTreeMap(mapBooks, nomArch);
-    if(doc != NULL)
-    {
-        fclose(file);
-        cargarDocumento(lib, mapBooks);
-    }
-    else
-    {
-        (lib->totalLibros)++;
-    }
 }
 
 char *quitar_caracteres(char* string, char* c){
@@ -82,11 +134,25 @@ void BuscarPorPalabra(Map *mapBooks){
   char *aux = searchMap(mapBooks, palabraBuscada);
   if(aux != NULL){
     if(strcmp(palabraBuscada, aux) == 0){
-        imprimirInfo(aux);
+        //imprimirInfo(aux);
         return;
     }
     aux = nextMap(mapBooks);
   }
+}
+
+void impresion(){
+
+    printf("\n\n\n *************** MENU ***************\n\n");
+    printf("    1. Cargar Documentos\n");
+    printf("    2. Mostrar Documentos\n");
+    printf("    3. Buscar libro por titulo\n");
+    printf("    4. Palabras frecuentes libro\n");
+    printf("    5. Palabras mas relevantes\n");
+    printf("    6. Buscar por palabra\n");
+    printf("    7. Buscar contexto de palabra\n");
+    printf("    0. Salir\n");
+    printf("---------------------------------------\n\n");
 }
 
 

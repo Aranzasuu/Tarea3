@@ -12,8 +12,9 @@ typedef struct Libreria{
 typedef struct Libros{
     char titulo[100];
     char id[100];
-    Map *nomTitulo;
-    Map *palLibro;
+    TreeMap *nomTitulo;
+    TreeMap *palLibro;
+    size_t totalPalabras;
 } Libros;
 
 typedef struct Palabra{
@@ -22,8 +23,15 @@ typedef struct Palabra{
     size_t frecuencia;
 } Palabra;
 
-void cargarDocumento(Libreria *librero, Map *mapBooks);
-int is_equal_string(void * key1, void * key2);
+
+int lower_than_string(void* key1, void* key2);
+
+Libreria *crearLibreria();
+Libros *crearLibro();
+
+void Menu();
+void impresion();
+void cargarDocumento(Libreria *librero);
 void BuscarPorPalabra(Map *mapBooks);
 char *quitar_caracteres(char* string, char* c);
 int hayQueEliminar(char c, char* string_chars);
