@@ -97,9 +97,7 @@ void cargarDocumento(Libreria *lib)
     char documento[500];
 
     printf("Ingrese los nombres de los archivos que desea cargar, debe separarlos por espacios y escribirlos con .txt\n");
-    fgets(documento, 500, stdin);
-    
-    
+    //fgets(documento, 500, stdin);   
 
 }
 
