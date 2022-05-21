@@ -5,35 +5,36 @@
 #include "TreeMap.h"
 
 typedef struct Libreria{
-    List *libros;
+    Map *nomTitulo;
     size_t totalLibros;
 } Libreria;
 
 typedef struct Libros{
     char titulo[100];
     char id[100];
-    TreeMap *nomTitulo;
-    TreeMap *palLibro;
+    Map *palLibro;
     size_t totalPalabras;
-} Libros;
+} Libro;
 
 typedef struct Palabra{
     char palabra[100];
     size_t ocurrencia;
-    size_t frecuencia;
+    float frecuencia;
 } Palabra;
 
 int is_equal_string(void * key1, void * key2);
 int lower_than_string(void* key1, void* key2);
 
 Libreria *crearLibreria();
-Libros *crearLibro();
+Libro *crearLibro();
 
 void Menu();
 void impresion();
+char* removedor(char* text, const char* subText);
 void cargarDocumento(Libreria *librero);
 void BuscarPorPalabra(Map *mapBooks);
 char *quitar_caracteres(char* string, char* c);
 int hayQueEliminar(char c, char* string_chars);
+char *filtro(char *p);
 
 #endif

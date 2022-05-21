@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "list.h"
-#include "TreeMap.h"
 #include "Map.h"
 #include "defFunciones.h"
 
@@ -26,21 +26,21 @@ Libreria *crearLibreria(){
         printf("No se pudo reservar memoria para la variable :c\n");
         return NULL;
     }
-    Librero->libros = createTreeMap(lower_than_string);
+    Librero->nomTitulo = createMap(is_equal_string);
     Librero->totalLibros = 0;
     return Librero;
 }
 
-Libros *crearLibro(){
-    Libros *libro = (Libros *) malloc(sizeof(Libros));
+Libro *crearLibro(){
+    Libro *libro = (Libro *) malloc(sizeof(Libro));
 
     if(libro == NULL){
         printf("No se pudo reservar memoria para la variable :c\n");
         return NULL;
     }
 
-    libro->nomTitulo = createTreeMap(lower_than_string);
-    libro->palLibro = createTreeMap(lower_than_string);
+    libro->palLibro = createMap(is_equal_string);
+    setSortFunction(libro->palLibro, lower_than_string);
     libro->totalPalabras = 0;
 
     return libro;
@@ -78,27 +78,162 @@ void Menu(){
                 scanf("%d", &opcion);
         }
 
+        impresion();
         printf("\n\nDesea realizar otra operacion?\n");
         printf("NO -> ingrese 0\n");
         printf("SI -> ingrese el numero de la operacion a realizar\n\n");
         scanf("%d", &opcion);
         if(opcion == 0) break;
-        impresion();
     }
 }
 
+char* removedor(char* text, const char* subText)
+{
+    size_t len = strlen(subText);
+    if (len > 0)
+    {
+        char* p = text;
+        while ((p = strstr(p, subText)) != NULL)
+        {
+            memmove(p, p + len, strlen(p + len) + 1);
+        }
+    }
+    return text;
+}
 
 // FUNCIÓN OPCIÓN 1 
 
 void cargarDocumento(Libreria *lib)
 {
-    FILE *archivo;
-    char espacio[2] = " ";
     char documento[500];
+    //11 21 1
 
-    printf("Ingrese los nombres de los archivos que desea cargar, debe separarlos por espacios y escribirlos con .txt\n");
-    //fgets(documento, 500, stdin);   
+    printf("Ingrese los nombres de los archivos que desea cargar, debe separarlos por espacios y escribirlos sin .txt\n");
+    getchar();
+    fgets(documento, 500, stdin);
+    documento[strcspn(documento, "\n")] = 0;
+    fflush(stdin);
 
+    List* documentos = createList();
+    char* documentoActual = strtok(documento, " ");
+    while (documentoActual != NULL)
+    {
+        pushBack(documentos, documentoActual);
+        documentoActual = strtok(NULL, " ");
+    }
+
+    //11
+    char* aux = firstList(documentos);
+    while (aux != NULL)
+    {
+        char* nombreArchivo = (char*)malloc(strlen(aux) + 1);
+        strcpy(nombreArchivo, aux);
+        strcat(nombreArchivo, ".txt");
+        FILE* archivo = fopen(nombreArchivo, "r");
+        free(nombreArchivo);
+
+        if(archivo == NULL){
+            printf("No se pudo abrir archivo %s\n", nombreArchivo);
+            continue;
+        }
+
+        Libro* libro = crearLibro();
+        strcpy(libro->id, aux);
+
+        char* linea = (char*)malloc(sizeof(char) * 1024);
+        fgets(linea, 1024, archivo);
+        linea = linea + 3;
+        linea[strcspn(linea, "\n")] = 0;
+        strcpy(libro->titulo, removedor(linea, "The Project Gutenberg eBook of "));
+
+        while(fgets(linea, 1024, archivo) != NULL)
+        {
+            linea[strcspn(linea, "\n")] = 0;
+
+            char* p = strtok(linea, " ");
+            while (p != NULL)
+            {
+                //\n1234567890 Filtrar
+                //if ()
+                //{
+                //    p = strtok(NULL, " ");
+                //    continue;
+                //}
+
+                //quitar_caracteres
+
+                //char* pAux = (char*)malloc(strlen(p) + 1);
+                for (int i = 0; p[i]; i++)
+                {
+                    p[i] = tolower(p[i]);
+                }
+
+                p = filtro(p);
+
+                //Pair* pair = searchTreeMap(libro->palLibro, pAux);
+                Palabra* pal = searchMap(libro->palLibro, p);
+                //printf("Pair\n");
+                if (pal == NULL) // (pal == NULL)
+                {
+                    pal = (Palabra*)malloc(sizeof(Palabra));
+                    pal->ocurrencia = 1;
+                    pal->frecuencia = 0;
+                    strcpy(pal->palabra, p);
+                    //insertTreeMap(libro->palLibro, pal->palabra, pal);
+                    insertMap(libro->palLibro, pal->palabra, pal);
+                }
+                else
+                {
+                    //Palabra* pal = (Palabra*)pair->value;
+                    pal->ocurrencia++;
+                }
+
+                p = strtok(NULL, " ");
+                libro->totalPalabras++;
+                //nextTreeMap(libro->palLibro)->value;
+            }
+        }
+
+        //21.txt
+        aux = nextList(documentos);
+        fclose(archivo);
+
+        //Pair* pair = firstMap(libro->palLibro);
+        Palabra* pal = firstMap(libro->palLibro);
+        while (pal != NULL)
+        {
+            //Palabra* pal = (Palabra*) pair->value;
+            //cantidad de veces que aparece una palabra dividida por el total de palabras en el libro.
+            pal->frecuencia = (float)pal->ocurrencia / libro->totalPalabras;
+            pal = nextMap(libro->palLibro);
+        }
+
+        insertMap(lib->nomTitulo, libro->titulo, libro);
+    }
+
+    Libro* libro = firstMap(lib->nomTitulo);
+    while (libro != NULL)
+    {
+        printf("Titulo: %s\n", libro->titulo);
+        printf("ID: %s\n", libro->id);
+        printf("Total Palabras: %d\n", libro->totalPalabras);
+        printf("Ingrese la palabra a buscar\n");
+        char palabraBuscada[50];
+        getchar();
+        scanf("%[^\n]s", palabraBuscada);
+        Palabra* aux = searchMap(libro->palLibro, palabraBuscada);
+        if (aux == NULL)
+        {
+            printf("ERROR\n");
+        }
+        else
+        {
+            printf("Palabra: %s\n", aux->palabra);
+            printf("Ocurrencia: %i\n", aux->ocurrencia);
+            printf("Frecuencia: %.2f\n\n\n", aux->frecuencia);
+        }
+        libro = nextMap(lib->nomTitulo);
+    }
 }
 
 char *quitar_caracteres(char* string, char* c){
@@ -108,12 +243,11 @@ char *quitar_caracteres(char* string, char* c){
         if(hayQueEliminar(string[i], c)){
             for(j = i; j < strlen(string) - 1; j++){
                 string[j] = string[j+1];
-        }
+            }
         string[j] = '\0';
         i--;
+        }
     }
-}
-
     return string;
 }
 
@@ -137,6 +271,25 @@ void BuscarPorPalabra(Map *mapBooks){
     }
     aux = nextMap(mapBooks);
   }
+}
+
+char *filtro(char *str)
+{
+    int i,j;
+
+    for (i = 0; str[i] != '\0'; ++i) 
+    {
+        while (!(str[i] >= 'a' && str[i] <= 'z') && !(str[i] >= 'A' && str[i] <= 'Z') && !(str[i] >= '0' && str[i] <= '9') && !(str[i] == '\0')) 
+        {
+            for (j = i; str[j] != '\0'; ++j)
+            {
+                str[j] = str[j + 1];
+            }
+            str[j] = '\0';
+        }
+    }
+
+    return str;
 }
 
 void impresion(){
