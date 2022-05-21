@@ -62,6 +62,7 @@ void Menu(){
                 cargarDocumento(librero);
                 break;
             case 2:
+                MostrarDocumentos(librero);
                 break;
             case 3:
                 break;
@@ -106,7 +107,6 @@ char* removedor(char* text, const char* subText)
 void cargarDocumento(Libreria *lib)
 {
     char documento[500];
-    //11 21 1
 
     printf("Ingrese los nombres de los archivos que desea cargar, debe separarlos por espacios y escribirlos sin .txt\n");
     getchar();
@@ -124,9 +124,9 @@ void cargarDocumento(Libreria *lib)
 
     //11
     char* aux = firstList(documentos);
-    while (aux != NULL)
-    {
+    while (aux != NULL){
         char* nombreArchivo = (char*)malloc(strlen(aux) + 1);
+        size_t contador = 0;
         strcpy(nombreArchivo, aux);
         strcat(nombreArchivo, ".txt");
         FILE* archivo = fopen(nombreArchivo, "r");
@@ -153,48 +153,36 @@ void cargarDocumento(Libreria *lib)
             char* p = strtok(linea, " ");
             while (p != NULL)
             {
-                //\n1234567890 Filtrar
-                //if ()
-                //{
-                //    p = strtok(NULL, " ");
-                //    continue;
-                //}
-
-                //quitar_caracteres
-
-                //char* pAux = (char*)malloc(strlen(p) + 1);
                 for (int i = 0; p[i]; i++)
                 {
                     p[i] = tolower(p[i]);
                 }
 
                 p = filtro(p);
+                contador += contCaract(p);
 
-                //Pair* pair = searchTreeMap(libro->palLibro, pAux);
                 Palabra* pal = searchMap(libro->palLibro, p);
-                //printf("Pair\n");
-                if (pal == NULL) // (pal == NULL)
+
+                if (pal == NULL)
                 {
                     pal = (Palabra*)malloc(sizeof(Palabra));
                     pal->ocurrencia = 1;
                     pal->frecuencia = 0;
                     strcpy(pal->palabra, p);
-                    //insertTreeMap(libro->palLibro, pal->palabra, pal);
                     insertMap(libro->palLibro, pal->palabra, pal);
                 }
                 else
                 {
-                    //Palabra* pal = (Palabra*)pair->value;
                     pal->ocurrencia++;
                 }
 
                 p = strtok(NULL, " ");
                 libro->totalPalabras++;
+                libro->totalCaracteres = contador;
                 //nextTreeMap(libro->palLibro)->value;
             }
         }
 
-        //21.txt
         aux = nextList(documentos);
         fclose(archivo);
 
@@ -211,17 +199,13 @@ void cargarDocumento(Libreria *lib)
         insertMap(lib->nomTitulo, libro->titulo, libro);
     }
 
-    Libro* libro = firstMap(lib->nomTitulo);
-    while (libro != NULL)
+    //Libro* libro = firstMap(lib->nomTitulo);
+    /*while (libro != NULL)
     {
         printf("Titulo: %s\n", libro->titulo);
         printf("ID: %s\n", libro->id);
         printf("Total Palabras: %d\n", libro->totalPalabras);
-        printf("Ingrese la palabra a buscar\n");
-        char palabraBuscada[50];
-        getchar();
-        scanf("%[^\n]s", palabraBuscada);
-        Palabra* aux = searchMap(libro->palLibro, palabraBuscada);
+        Palabra* aux = searchMap(libro->palLibro, "ola");
         if (aux == NULL)
         {
             printf("ERROR\n");
@@ -230,8 +214,22 @@ void cargarDocumento(Libreria *lib)
         {
             printf("Palabra: %s\n", aux->palabra);
             printf("Ocurrencia: %i\n", aux->ocurrencia);
-            printf("Frecuencia: %.2f\n\n\n", aux->frecuencia);
+            printf("Frecuencia: %.2f\n", aux->frecuencia);
         }
+        printf("Total caracteres: %zd\n\n\n", libro->totalCaracteres);
+        libro = nextMap(lib->nomTitulo);
+    }*/
+}
+
+// FUNCIÓN OPCIÓN 2
+void MostrarDocumentos(Libreria *lib){
+    Libro* libro = firstMap(lib->nomTitulo);
+    while (libro != NULL)
+    {
+        printf("Titulo: %s\n", libro->titulo);
+        printf("ID: %s\n", libro->id);
+        printf("Total Palabras: %d\n", libro->totalPalabras);
+        printf("Total caracteres: %zd\n\n\n", libro->totalCaracteres);
         libro = nextMap(lib->nomTitulo);
     }
 }
@@ -290,6 +288,15 @@ char *filtro(char *str)
     }
 
     return str;
+}
+
+size_t contCaract(char *palabra){
+    size_t largo = strlen(palabra);
+    size_t cont = 0;
+    for(int i = 0; i < largo; i++){
+        cont++;
+    }
+    return cont;
 }
 
 void impresion(){

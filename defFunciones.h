@@ -14,6 +14,7 @@ typedef struct Libros{
     char id[100];
     Map *palLibro;
     size_t totalPalabras;
+    size_t totalCaracteres;
 } Libro;
 
 typedef struct Palabra{
@@ -30,11 +31,14 @@ Libro *crearLibro();
 
 void Menu();
 void impresion();
-char* removedor(char* text, const char* subText);
 void cargarDocumento(Libreria *librero);
+void MostrarDocumentos(Libreria *librero);
 void BuscarPorPalabra(Map *mapBooks);
+
+char* removedor(char* text, const char* subText);
 char *quitar_caracteres(char* string, char* c);
 int hayQueEliminar(char c, char* string_chars);
 char *filtro(char *p);
+size_t contCaract(char *p);
 
 #endif
