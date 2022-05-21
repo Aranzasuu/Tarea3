@@ -27,6 +27,7 @@ Libreria *crearLibreria(){
         return NULL;
     }
     Librero->nomTitulo = createMap(is_equal_string);
+    setSortFunction(Librero->nomTitulo, lower_than_string);
     Librero->totalLibros = 0;
     return Librero;
 }
@@ -256,7 +257,7 @@ int hayQueEliminar(char c, char* string_chars){
     return 0;
 }
 
-void BuscarPorPalabra(Map *mapBooks){
+void BuscarPorPalabra(Map *mapBooks){    // función cata
   printf("Ingrese la palabra que desea buscar: ");
   char *palabraBuscada = (char*)malloc(50 * sizeof(char));
   getchar();
