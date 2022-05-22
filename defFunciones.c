@@ -81,9 +81,9 @@ void Menu(){
         }
 
         impresion();
-        printf("\n\nDesea realizar otra operacion?\n");
+        printf("\nDesea realizar otra operacion?\n");
         printf("NO -> ingrese 0\n");
-        printf("SI -> ingrese el numero de la operacion a realizar\n\n");
+        printf("SI -> ingrese el numero de la operacion a realizar\n\ningrese su opcion: ");
         scanf("%d", &opcion);
         if(opcion == 0) break;
     }
@@ -108,7 +108,6 @@ char* removedor(char* text, const char* subText)
 void cargarDocumento(Libreria *lib)
 {
     char documento[500];
-
     printf("Ingrese los nombres de los archivos que desea cargar, debe separarlos por espacios y escribirlos sin .txt\n");
     getchar();
     fgets(documento, 500, stdin);
@@ -185,6 +184,7 @@ void cargarDocumento(Libreria *lib)
         }
 
         aux = nextList(documentos);
+        lib->totalLibros++;
         fclose(archivo);
 
         //Pair* pair = firstMap(libro->palLibro);
@@ -199,40 +199,27 @@ void cargarDocumento(Libreria *lib)
 
         insertMap(lib->nomTitulo, libro->titulo, libro);
     }
-
-    //Libro* libro = firstMap(lib->nomTitulo);
-    /*while (libro != NULL)
-    {
-        printf("Titulo: %s\n", libro->titulo);
-        printf("ID: %s\n", libro->id);
-        printf("Total Palabras: %d\n", libro->totalPalabras);
-        Palabra* aux = searchMap(libro->palLibro, "ola");
-        if (aux == NULL)
-        {
-            printf("ERROR\n");
-        }
-        else
-        {
-            printf("Palabra: %s\n", aux->palabra);
-            printf("Ocurrencia: %i\n", aux->ocurrencia);
-            printf("Frecuencia: %.2f\n", aux->frecuencia);
-        }
-        printf("Total caracteres: %zd\n\n\n", libro->totalCaracteres);
-        libro = nextMap(lib->nomTitulo);
-    }*/
+    printf("\n\n*** Se han cargado %zd documento(s) correctamente ***\n", lib->totalLibros);
 }
 
 // FUNCIÓN OPCIÓN 2
+
 void MostrarDocumentos(Libreria *lib){
     Libro* libro = firstMap(lib->nomTitulo);
+    size_t cont = 1;
+    
     while (libro != NULL)
     {
-        printf("Titulo: %s\n", libro->titulo);
-        printf("ID: %s\n", libro->id);
-        printf("Total Palabras: %d\n", libro->totalPalabras);
-        printf("Total caracteres: %zd\n\n\n", libro->totalCaracteres);
+        printf("\nInformacion documento %zd:", cont);
+        printf("\n-------------------------\n\n");
+        printf(" > Titulo: %s\n", libro->titulo);
+        printf(" > ID: %s\n", libro->id);
+        printf(" > Total Palabras: %d\n", libro->totalPalabras);
+        printf(" > Total Caracteres: %zd\n", libro->totalCaracteres);
         libro = nextMap(lib->nomTitulo);
+        cont++;
     }
+    printf("\n-------------------------\n");
 }
 
 char *quitar_caracteres(char* string, char* c){
@@ -258,6 +245,14 @@ int hayQueEliminar(char c, char* string_chars){
 }
 
 void BuscarPorPalabra(Map *mapBooks){    // función cata
+
+    // 1. HAY QUE REVISAR EN CADA LIBRO SI EXISTE LA PALABRA DEL MAPA PALLIBRO.
+    // 2. HAY QUE ORDENAR EL MAPA DE MAYOR A MENOR RELEVANCIA.
+    // 3. IMPRIMIR ID Y TITULO DE CADA LIBRO EN ESE ORDEN.
+
+
+
+
   printf("Ingrese la palabra que desea buscar: ");
   char *palabraBuscada = (char*)malloc(50 * sizeof(char));
   getchar();
@@ -294,9 +289,8 @@ char *filtro(char *str)
 size_t contCaract(char *palabra){
     size_t largo = strlen(palabra);
     size_t cont = 0;
-    for(int i = 0; i < largo; i++){
+    for(int i = 0; i < largo; i++)
         cont++;
-    }
     return cont;
 }
 
