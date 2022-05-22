@@ -19,6 +19,7 @@ typedef struct Libros{
 
 typedef struct Palabra{
     char palabra[100];
+    Map *libPalabra;
     size_t ocurrencia;
     float frecuencia;
 } Palabra;
@@ -34,11 +35,15 @@ void impresion();
 void cargarDocumento(Libreria *librero);
 void MostrarDocumentos(Libreria *librero);
 void BuscarPorPalabra(Map *mapBooks);
+void MayorFrecuencia(Libreria *librero);
 
 char* removedor(char* text, const char* subText);
 char *quitar_caracteres(char* string, char* c);
 int hayQueEliminar(char c, char* string_chars);
 char *filtro(char *p);
 size_t contCaract(char *p);
+void imprimirPalabras(Libro *lib);
+int pal_in_list(List *palabras, char *title);
+void BuscarPorTitulo(Libreria *lib);
 
 #endif
