@@ -335,6 +335,7 @@ void MostrarRelevantes(Libreria *librero){
             Palabra *pal = firstMap(libBuscado->palLibro);
             while(pal != NULL){
                 pal->relevancia = calcularRelevancia(librero, pal);
+                printf("rel = %f\n", pal->relevancia);
                 pal = nextMap(libBuscado->palLibro);
                 
             }
@@ -348,7 +349,8 @@ void MostrarRelevantes(Libreria *librero){
 }
 
 size_t calcularRelevancia(Libreria *librero, Palabra *pal){
-    size_t contDoc = 0, rel = 0;
+    size_t contDoc = 0;
+    float rel = 0;
 
     // calcular en cuantos documentos está la palabra
     Libro *lib = firstMap(librero->nomTitulo);
