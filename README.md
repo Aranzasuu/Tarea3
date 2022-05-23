@@ -34,3 +34,15 @@ Instrucciones para correr el programa:
 
 Comentarios:
 El programa solo puede correr en windows 11, no aparece que todos hicimos cambios ya que hicimos las funciones que nos correspondian y se las pasamos a aranzasu para que ella las pegara en el codigo, por lo tanto no aparecen commits de los demas.
+
+Puntos por cada integrante:
+
+-> Catalina Araya: +0 puntual y realiza su parte.
+
+-> Luis Castro: +0 puntual, buen ambiente.
+
+-> Rocío Arriagada: +0 puntual, buen desempeño.
+
+-> Nicolás Mery: +0 puntual, realiza sus tareas.
+
+-> Aranzasu Larraín: +0 puntual, da ideas.

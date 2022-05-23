@@ -334,8 +334,8 @@ void MostrarRelevantes(Libreria *librero){
         if(strcmp(libBuscado->titulo, title) == 0){
             Palabra *pal = firstMap(libBuscado->palLibro);
             while(pal != NULL){
-                pal->relevancia = calcularRelevancia(librero, pal);
-                printf("rel = %f\n", pal->relevancia);
+                float relevan = calcularRelevancia(librero, pal);
+                pal->relevancia = relevan;
                 pal = nextMap(libBuscado->palLibro);
                 
             }
@@ -402,8 +402,6 @@ int pal_in_list(List *palabras, char *title)
     char *pal = firstList(palabras);
     char *aux = strtok(title, " ");
     while(pal != NULL){
-        printf("palabra titulo comparado = %s\n",aux);
-        printf("palabra comparada con el titulo = %s\n\n",pal);
         if (strcmp(aux, pal) != 0) return 1;
         pal = (NULL, " ");
     }
