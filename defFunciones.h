@@ -45,7 +45,6 @@ char *quitar_caracteres(char* string, char* c);
 int hayQueEliminar(char c, char* string_chars);
 char *filtro(char *p);
 size_t contCaract(char *p);
-void imprimirPalabras(Libro *lib);
 int pal_in_list(List *palabras, char *title);
 void mayorFrec(List *palabras, int contador);
 size_t calcularRelevancia(Libreria *librero, Palabra *pal);
