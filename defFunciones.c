@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <math.h>
 #include "list.h"
 #include "Map.h"
 #include "defFunciones.h"
@@ -69,12 +70,16 @@ void Menu(){
                 BuscarPorTitulo(librero);
                 break;
             case 4:
+                MayorFrecuencia(librero);
                 break;
             case 5:
+                MostrarRelevantes(librero);
                 break;
             case 6:
+                BuscarPorPalabra(librero);
                 break;
             case 7:
+                //MostrarPalabracontx(librero);
                 break;
             default:
                 printf("Ingrese una opcion valida\n-> ");
@@ -247,43 +252,121 @@ int hayQueEliminar(char c, char* string_chars){
     return 0;
 }
 
-// FUNCIÓN OPCIÓN 3
-
-void MayorFrecuencia(Libreria *librero){
-    char *identity[100];
-    printf("Ingrese el id del libro a buscar:\n");
-    getchar();
-    scanf("%[^\n]s", identity);
-
-    Libro *lib = firstMap(librero->nomTitulo);
-    /*while(lib != NULL){
-        if(strcmp(lib->id,identity) == 0){
-            imprimirPalabras(lib);
+void mayorFrec(List *palabras, int cont){
+    Palabra *aux = firstList(palabras);
+    Palabra *mayorFrec = aux;
+    while(aux != NULL){
+        if(aux->frecuencia > mayorFrec->frecuencia)
+            mayorFrec = aux;
+        aux = nextList(palabras);
+    }
+    printf("%d. Palabra: %s\n   Frecuencia: %f\n\n", cont+1, mayorFrec->palabra, mayorFrec->frecuencia);
+    Palabra *eliminar = firstList(palabras);
+    while(eliminar != NULL){
+        if(eliminar->frecuencia == mayorFrec->frecuencia){
+            popCurrent(palabras);
+            return;
         }
-    }*/
-
+        eliminar = nextList(palabras);
+    }
 }
 
-/*void BuscarPorPalabra(Map *mapBooks){    // función cata
+// FUNCIÓN OPCIÓN 4
 
-    // 1. HAY QUE REVISAR EN CADA LIBRO SI EXISTE LA PALABRA DEL MAPA PALLIBRO.
-    // 2. HAY QUE ORDENAR EL MAPA DE MAYOR A MENOR RELEVANCIA.
-    // 3. IMPRIMIR ID Y TITULO DE CADA LIBRO EN ESE ORDEN.
+void MayorFrecuencia(Libreria *librero){
+    char identity[100];
+    printf("Ingrese el id del libro a buscar: ");
+    getchar();
+    scanf("%[^\n]s", identity);
+    printf("\n");
 
-
-  printf("Ingrese la palabra que desea buscar: ");
-  char *palabraBuscada = (char*)malloc(50 * sizeof(char));
-  getchar();
-  scanf("%s", palabraBuscada);
-  char *aux = searchMap(mapBooks, palabraBuscada);
-  if(aux != NULL){
-    if(strcmp(palabraBuscada, aux) == 0){
-        //imprimirInfo(aux);
-        return;
+    Libro *lib = firstMap(librero->nomTitulo);
+    List *aux = createList();
+    while(lib != NULL){
+        if(strcmp(lib->id,identity) == 0){
+            Palabra *pal = firstMap(lib->palLibro);
+            while(pal != NULL){
+                pushBack(aux,pal);
+                pal = nextMap(lib->palLibro);
+            }
+            for(int i = 0; i < 10; i++){
+                mayorFrec(aux, i);
+            }
+            return;
+        }
+        lib = nextMap(librero->nomTitulo);
     }
-    aux = nextMap(mapBooks);
-  }
-}*/
+}
+
+void mayorRelevancia(List *palabras, int cont){
+    Palabra *aux = firstList(palabras);
+    Palabra *mayorRel = aux;
+    while(aux != NULL){
+        if(aux->relevancia > mayorRel->relevancia)
+            mayorRel = aux;
+        printf("relevancia: %zd\n", aux->relevancia);
+        aux = nextList(palabras);
+    }
+    printf("%d. Titulo: %s\n   Relevancia: %f\n\n", cont+1, mayorRel->palabra, mayorRel->relevancia);
+    Palabra *eliminar = firstList(palabras);
+    while(eliminar != NULL){
+        if(eliminar->relevancia == mayorRel->relevancia){
+            popCurrent(palabras);
+            return;
+        }
+        eliminar = nextList(palabras);
+    }
+}
+
+
+// FUNCIÓN OPCIÓN 5
+void MostrarRelevantes(Libreria *librero){
+    size_t docPal = 0;
+    List *listRel = createList();
+    char title[100];
+    printf("Ingrese el titulo del libro: ");
+    getchar();
+    scanf("%[^\n]s", title);
+    printf("\n");
+
+    Libro *libBuscado = firstMap(librero->nomTitulo);
+    while(libBuscado != NULL){
+        if(strcmp(libBuscado->titulo, title) == 0){
+            Palabra *pal = firstMap(libBuscado->palLibro);
+            while(pal != NULL){
+                //pal->relevancia = calcularRelevancia(librero, pal);
+                pal = nextMap(libBuscado->palLibro);
+                
+            }
+            pushBack(listRel,pal);
+        }
+        libBuscado = nextMap(librero->nomTitulo);
+    }
+
+    //for(int i = 0; i < 10;i++) mayorRelevancia(listRel,i);
+    
+}
+
+size_t calcularRelevancia(Libreria *librero, Palabra *pal){
+    size_t contDoc = 0, rel = 0;
+
+    // calcular en cuantos documentos está la palabra
+    Libro *lib = firstMap(librero->nomTitulo);
+    while(lib != NULL){
+        Palabra *pala = firstMap(lib->palLibro);
+        while(pala != NULL){
+            if(strcmp(pala->palabra,pal->palabra) == 0){
+                contDoc++;
+            }
+            pala = nextMap(lib->palLibro);
+        }
+        lib = nextMap(librero->nomTitulo);
+    }
+
+    rel = (pal->frecuencia) * (librero->totalLibros/contDoc);
+    return rel;
+
+}
 
 char *filtro(char *str)
 {
@@ -310,10 +393,6 @@ size_t contCaract(char *palabra){
     for(int i = 0; i < largo; i++)
         cont++;
     return cont;
-}
-
-void imprimirPalabras(Libro *lib){
-    
 }
 
 int pal_in_list(List *palabras, char *title)
@@ -344,7 +423,6 @@ void BuscarPorTitulo(Libreria *lib){
 
     while(pal != NULL){
         if(pal != NULL){
-            //printf("se guardan las palabras en la lista\n");
             pushBack(palabras, pal);
             char *pal = strtok(NULL, " ");
         }
@@ -354,16 +432,13 @@ void BuscarPorTitulo(Libreria *lib){
     char *aux = firstList(palabras);
 
     while(libro != NULL){
-        //printf("recorrer los libros\n");
         if(pal_in_list(palabras, libro->titulo) == 0){
-            //printf("se guardan en la lista los libros ya comparados\n");
             pushBack(libPal,libro->titulo);
         }
         libro = nextMap(lib->nomTitulo);
     }
 
     char *title = firstList(libPal);
-    //printf("se recorre la lista con los libros\n");
     if(title == NULL){
         printf("\n  No se encontraron titulos relacionados\n");
     }
@@ -376,67 +451,55 @@ void BuscarPorTitulo(Libreria *lib){
     }
 }
 
-/*
-void BuscarPorTitulo(Libreria *lib)
-{
-    char titulo[100];
-    printf("Ingrese las palabras: "); // o mas bien palabra/s que pertenezca/n a uno o mas titulos
+void BuscarPorPalabra(Libreria *books){    
+    printf("Ingrese la palabra que desea buscar: ");
+    char *palabraBuscada = (char *)malloc(50 * sizeof(char));
     getchar();
-    fgets(titulo, 200, stdin);
-    titulo[strcspn(titulo, "\n")] = 0;
-    fflush(stdin);
-
-    List *list_pal = createList(); // se crea una lista con las palabras
-    char *pal = strtok(titulo, " ");
-    while (pal != NULL)
-    {
-        pushBack(list_pal, pal);
-        pal = strtok(NULL, " ");
-    }
-    pushBack(list_pal, pal);
-    Libro *libro = firstMap(lib->nomTitulo); // se crea una lista con las
-    int cont = 0;                            // palabra de el titulo
-
-    while (libro != NULL)
-    {
-        int flag = 1;
-        // comparar palabras
-        List *list_ti = createList();
-        char *aux = strtok(libro->titulo, " ");
-        while (aux != NULL)
-        {
-            pushBack(list_ti, aux);
-            aux = strtok(NULL, " ");
+    scanf("%[^\n]s", palabraBuscada);
+    Libro *aux = firstMap(books->nomTitulo);
+    
+    while(aux != NULL){
+        Palabra *pal = (Palabra*) searchMap(aux->palLibro, palabraBuscada);
+        if(pal != NULL){
+            printf("Titulo: %s\n", aux->titulo);
         }
-        pushBack(list_ti, aux);
-        pal = firstList(list_pal);
-        while (pal != NULL) // comparamos las dos listas
-        {
-            if (pal_in_list(pal, list_ti) == 0)
-            {
-                flag = 0;
-                break;
-            }
-            pal = nextList(list_pal);
-        }
-        if (flag == 1 && cont == 0)
-        {
-            printf("\n  Se encontraron los siguientes titulos relacionados : ");
-            cont = 1;
-        }
-        if (flag == 1)
-        {
-            printf("\n ~ %s", libro->titulo);
-        }
-
-        lib = nextMap(lib->nomTitulo);
-    }
-    if (cont == 0)
-    {
-        printf("\n  No se encontraron titulos relacionados\n");
+        aux = nextMap(books->nomTitulo);
     }
 }
-*/
+
+/*
+void MostrarPalabracontx(Libreria *books){
+    printf("Ingrese el titulo del libro: ");
+    char *titulo = (char*)malloc(50 * sizeof(char));
+    getchar();
+    scanf("%s", titulo);
+    printf("Ingrese la palabra que desea buscar: ");
+    char *palabraBuscada = (char*)malloc(50 * sizeof(char));
+    getchar();
+    scanf("%s", palabraBuscada);
+    Pair *lib = searchMap(books->nomTitulo, titulo);
+    Libro *text = lib->value;
+    char linea[1024];
+    FILE *txt;
+    strcat(titulo,".txt");
+    txt = fopen(titulo, "r");
+    Pair *pala = searchMap(text->palLibro, palabraBuscada);
+    if(lib != NULL){
+        if(pala!=NULL){
+            while(fgets(linea, 1024, txt)!=NULL){
+                Palabra *word = pala->value;
+                //ftell(txt);
+            }
+        }
+        else{
+            printf("La palabra no se encuentra en el libro");
+        }
+    }
+    else{
+        printf("El libro que busca no se encuentra\n");
+        return;
+    }
+}*/
 
 void impresion(){
 

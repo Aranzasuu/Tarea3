@@ -19,9 +19,9 @@ typedef struct Libros{
 
 typedef struct Palabra{
     char palabra[100];
-    Map *libPalabra;
     size_t ocurrencia;
     float frecuencia;
+    float relevancia;
 } Palabra;
 
 int is_equal_string(void * key1, void * key2);
@@ -34,8 +34,11 @@ void Menu();
 void impresion();
 void cargarDocumento(Libreria *librero);
 void MostrarDocumentos(Libreria *librero);
-void BuscarPorPalabra(Map *mapBooks);
+void BuscarPorPalabra(Libreria *books);
 void MayorFrecuencia(Libreria *librero);
+/*void MostrarPalabracontx(Libreria *librero);*/
+void BuscarPorTitulo(Libreria *lib);
+void MostrarRelevantes(Libreria *librero);
 
 char* removedor(char* text, const char* subText);
 char *quitar_caracteres(char* string, char* c);
@@ -44,6 +47,7 @@ char *filtro(char *p);
 size_t contCaract(char *p);
 void imprimirPalabras(Libro *lib);
 int pal_in_list(List *palabras, char *title);
-void BuscarPorTitulo(Libreria *lib);
+void mayorFrec(List *palabras, int contador);
+size_t calcularRelevancia(Libreria *librero, Palabra *pal);
 
 #endif
